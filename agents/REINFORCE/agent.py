@@ -30,7 +30,7 @@ class REINFORCE(object):
         self.optimizer = optim.Adam(self.model.parameters(), lr=self.lr)
         self.model.train()
     
-    def select_action(self, observations, train=True):
+    def action(self, observations, train=True):
         """A step of agent acts 
         Arguments:
             prev_action (arr): The selected paper from previous action
