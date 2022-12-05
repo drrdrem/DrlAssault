@@ -6,7 +6,7 @@ import torch.nn.utils as utils
 from torch.autograd import Variable
 import torch.autograd as autograd
 import torch.nn.functional as F
-from network import *
+from agents.AC.network import *
 
 
 class A2C(object):
@@ -19,7 +19,7 @@ class A2C(object):
             seed (int): Random Seed, default 0.
             model_dir: load model directory, default none.
         """
-    def __init__(self, action_size=2, observations_size==(250, 160, 3), 
+    def __init__(self, action_size=2, observations_size=(3, 256, 256), 
                 lr=1e-3, gamma=.9, seed=0, model_dir=None):
         torch.manual_seed(seed=seed)
         self.action_size = action_size
@@ -35,7 +35,6 @@ class A2C(object):
         self.optimizer = optim.Adam(self.model.parameters(), lr=self.lr)
         self.model.train()
     
-
     def action(self, observations, train=True):
         """A step of agent acts 
         """
@@ -45,8 +44,8 @@ class A2C(object):
             self.model.eval()
 
         observations = torch.tensor(observations)
-        observations = autograd.Variable(observations)
-        probs, value = self.model(observations)       
+        observations = autograd.Variable(observations).float()
+        probs, value = self.model(observations)
         
         return probs, value
 
@@ -79,7 +78,7 @@ class A2C(object):
             policy_losses.append(-log_prob * advantage)
 
             # calculate critic (value) loss using L1 smooth loss
-            value_losses.append(F.smooth_l1_loss(value, torch.tensor([R])))
+            value_losses.append(F.smooth_l1_loss(value, torch.tensor([[R]])))
 
         loss = torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()
         loss = loss / len(rewards)

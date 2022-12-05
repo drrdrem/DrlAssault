@@ -6,33 +6,38 @@ from torch.distributions import Categorical
 
 
 class PolicyNetwork(nn.Module):
-    def __init__(self, observations_size=(250, 160, 3), action_size=2):
-        super(Actor, self).__init__()
+    def __init__(self, observations_size=(3, 256, 256), action_size=2, seed=0):
+        super(PolicyNetwork, self).__init__()
+        torch.manual_seed(seed=seed)
+
         self.observations_size = observations_size
         self.action_size = action_size
-        self.linear1 = nn.Linear(self.observations_size, 128)
-        self.linear2 = nn.Linear(128, 256)
-        self.linear3 = nn.Linear(256, self.action_size)
+        channels, height, width = self.observations_size
+
+        self.features =nn.Sequential(
+                                        nn.Conv2d(in_channels=channels, out_channels=32, kernel_size=5, stride=1),
+                                        nn.ReLU(),
+                                        nn.MaxPool2d(3, 3),
+                                        nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=1),
+                                        nn.ReLU(),
+                                        nn.MaxPool2d(3, 3),
+                                        nn.ReLU(),
+                                        nn.Flatten(),
+                                        nn.Linear(64 * 27 * 27, 512),
+                                        nn.ReLU(),
+                                        nn.Linear(512, 128),
+                                        nn.ReLU(),
+                                    )
+
+
+        self.actor = nn.Linear(128, self.action_size)
+        self.critic = nn.Linear(128, 1)
 
     def forward(self, state):
-        output = F.relu(self.linear1(state))
-        output = F.relu(self.linear2(output))
-        output = self.linear3(output)
-        distribution = Categorical(F.softmax(output, dim=-1))
-        return distribution
+        x =  self.features(state)
 
+        distribution = F.softmax(self.actor(x), dim=-1)
+        value = self.critic(x)
 
-class Critic(nn.Module):
-    def __init__(self, state_size=(250, 160, 3), action_size):
-        super(Critic, self).__init__()
-        self.state_size = state_size
-        self.action_size = action_size
-        self.linear1 = nn.Linear(self.state_size, 128)
-        self.linear2 = nn.Linear(128, 256)
-        self.linear3 = nn.Linear(256, 1)
-
-    def forward(self, state):
-        output = F.relu(self.linear1(state))
-        output = F.relu(self.linear2(output))
-        value = self.linear3(output)
-        return value
+        
+        return distribution, value
