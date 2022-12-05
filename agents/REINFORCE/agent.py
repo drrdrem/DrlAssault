@@ -32,13 +32,6 @@ class REINFORCE(object):
     
     def action(self, observations, train=True):
         """A step of agent acts 
-        Arguments:
-            prev_action (arr): The selected paper from previous action
-            text (str): features text
-            pre_states (tuple): pre_state cx, hx fromm RNN output
-
-        Returns:
-            Next paper id.
         """
         if train:
             self.model.train()
