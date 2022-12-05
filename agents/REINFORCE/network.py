@@ -29,12 +29,10 @@ class PolicyNetwork(nn.Module):
 
 
         self.actor = nn.Linear(128, self.action_size)
-        self.critic = nn.Linear(128, 1)
 
     def forward(self, state):
         x =  self.features(state)
 
         distribution = F.softmax(self.actor(x), dim=-1)
-        value = self.critic(x)
 
-        return distribution, value
+        return distribution
