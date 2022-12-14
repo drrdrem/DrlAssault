@@ -10,16 +10,18 @@ transform = T.Resize(size = (256,256))
 
 env = gym.make("Assault-v4")
 agent = a2c.A2C(action_size=7)
-
-for _ in range(100):
+print("Action Space:")
+print(env.action_space)
+print()
+for i in range(1000):
     observation = env.reset()
     entropies, log_probs, values, rewards = [], [], [], []
     done = False
     cnt = 0
-
+    rewards_sum = 0
     while not done:
         cnt += 1
-        # env.render()
+        # img = env.render(mode='rgb_array')
 
         observation = Image.fromarray(np.uint8(observation)).convert('RGB')
         observation = transform(observation)
@@ -33,6 +35,7 @@ for _ in range(100):
 
         observation_nxt, reward, done, info = env.step(action)
 
+        rewards_sum += reward
 
         prob = probs[:, action[0,0]].view(1, -1)
         log_prob = prob.log()
@@ -45,4 +48,4 @@ for _ in range(100):
 
         observation = observation_nxt
     loss = agent.learn(rewards, log_probs, values, entropies)
-    print(cnt, loss)
+    print("Epi {}: loss {}, cnt: {}, avg: {}".format(i, loss, cnt, rewards_sum/cnt))

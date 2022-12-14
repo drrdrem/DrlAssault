@@ -16,20 +16,20 @@ class PolicyNetwork(nn.Module):
                                         nn.Conv2d(in_channels=channels, out_channels=32, kernel_size=5, stride=1),
                                         nn.ReLU(),
                                         nn.MaxPool2d(3, 3),
-                                        nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=1),
+                                        nn.Conv2d(in_channels=32, out_channels=16, kernel_size=3, stride=1),
                                         nn.ReLU(),
                                         nn.MaxPool2d(3, 3),
                                         nn.ReLU(),
                                         nn.Flatten(),
-                                        nn.Linear(64 * 27 * 27, 512),
+                                        nn.Linear(16 * 27 * 27, 128),
                                         nn.ReLU(),
-                                        nn.Linear(512, 128),
+                                        nn.Linear(128, 64),
                                         nn.ReLU(),
                                     )
 
 
-        self.actor = nn.Linear(128, self.action_size)
-        self.critic = nn.Linear(128, 1)
+        self.actor = nn.Linear(64, self.action_size)
+        self.critic = nn.Linear(64, 1)
 
     def forward(self, state):
         x =  self.features(state)
