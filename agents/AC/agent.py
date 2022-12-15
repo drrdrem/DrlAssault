@@ -1,3 +1,6 @@
+"""Actor Critic: Sean Yin, yin00425@umn.edu
+"""
+
 import numpy as np
 
 import torch
@@ -11,7 +14,6 @@ torch.manual_seed(0)
 
 class A2C(object):
     """An agent based on A2C Algorithm.
-       Modified from: https://github.com/pytorch/examples/blob/master/reinforcement_learning/actor_critic.py
         Arguments:
             action_size (int): Size of Actions, default 20.
             lr (float): learning rate, default 1e-3.
@@ -118,6 +120,8 @@ if __name__== '__main__':
 
 
     env = gym.make("Assault-v4")
+    env.seed(0)
+
     action_size = env.action_space.n
     agent = A2C(action_size=action_size)
 

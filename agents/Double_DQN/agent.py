@@ -5,7 +5,7 @@ University of Minnesota, Electrical and Computer Engineering
 chungenyu6@gmail.com
 """
 """
-The way I store state and memory is not efficient
+The way I store data and train is not efficient
 Sean Yin slightly modified this code
 """
 import torch
@@ -173,6 +173,8 @@ if __name__ == '__main__':
 
     # Environment parameters
     env = gym.make('Assault-v4')
+    env.seed(0)
+
     action_size = env.action_space.n            # 7
     state_size = env.observation_space.shape    # observation = state # shape(210,160,3)
     state_size = np.array([256,256,3])          # resize to (256,256,3)
@@ -193,7 +195,7 @@ if __name__ == '__main__':
         state = env.reset()         # reset environment to initial state for each episode # state.shape(210,160,3)
 
         done = False
-        while not done:
+        while (not done) and (t<2000):
             cnt += 1
             # env.render()
             env.env.ale.saveScreenPNG(img_path+'/{}.png'.format(cnt))   # save the process as img

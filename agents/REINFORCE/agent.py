@@ -1,3 +1,7 @@
+"""Reinforcement: Sean Yin, yin00425@umn.edu
+"""
+
+
 import numpy as np
 
 import torch
@@ -6,11 +10,10 @@ import torch.nn.utils as utils
 from torch.autograd import Variable
 import torch.autograd as autograd
 
-from agents.REINFORCE.network import *
+from REINFORCE.network import *
 
 class REINFORCE(object):
     """An agent based on REINFORCE Algorithm.
-       Modified from: https://github.com/chingyaoc/pytorch-REINFORCE/blob/master/reinforce_discrete.py
     """
     def __init__(self, action_size=2, observations_size=(3, 256, 256), 
                 lr=1e-3, gamma=.9, alpha=0.0001, l=0.5, seed=0, model_dir=None):
